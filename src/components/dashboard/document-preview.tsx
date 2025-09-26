@@ -164,38 +164,36 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
       const margin = 15;
       let y = margin;
       
-      // Header for all pages
-      for (let i = 1; i <= doc.internal.pages.length; i++) {
-        doc.setPage(i);
-        doc.setFontSize(12);
-        doc.setTextColor(128, 0, 128); // Purple color
-        doc.setFont("Times-Roman", "bold");
-        doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
-      }
-      doc.setPage(1);
-      y += 10;
-      
-      
       doc.setTextColor(0, 0, 0); 
       doc.setFont("Times-Roman", "normal");
       doc.setFontSize(12);
 
       const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
 
+      let pageCount = 1;
+      
+      const addHeader = (pageNum: number) => {
+        doc.setPage(pageNum);
+        doc.setFontSize(12);
+        doc.setTextColor(128, 0, 128); // Purple color
+        doc.setFont("Times-Roman", "bold");
+        doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
+        doc.setTextColor(0, 0, 0); 
+        doc.setFont("Times-Roman", "normal");
+        doc.setFontSize(12);
+      };
+
+      addHeader(1);
+      y += 10;
+
       lines.forEach((line: string) => {
           const isHeading = line.length < 100 && !line.endsWith('.') && line.trim().length > 0;
           
           if (y + 10 > pageHeight - margin) {
               doc.addPage();
-              y = margin + 10; // Reset y for new page
-              // Add header to new page
-              doc.setFontSize(12);
-              doc.setTextColor(128, 0, 128); // Purple color
-              doc.setFont("Times-Roman", "bold");
-              doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
-              doc.setTextColor(0, 0, 0); 
-              doc.setFont("Times-Roman", "normal");
-              doc.setFontSize(12);
+              pageCount++;
+              y = margin + 10;
+              addHeader(pageCount);
           }
           if(isHeading) {
             doc.setFont("Times-Roman", "bold");
@@ -206,7 +204,6 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
       });
 
       // Add footer ONLY to the last page
-      const pageCount = doc.internal.pages.length;
       doc.setPage(pageCount);
       doc.setFontSize(10);
       doc.setTextColor(128, 0, 128);
@@ -232,7 +229,7 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
           {result && (
             <div className="p-4 sm:p-6" id="document-content">
                 <p className="text-xs text-muted-foreground mb-4">{result.progress}</p>
-                {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm lg:prose-base max-w-none whitespace-pre-wrap">{result.document}</div>}
+                {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm lg:prose-base max-w-none whitespace-pre-wrap text-foreground">{result.document}</div>}
             </div>
           )}
         </ScrollArea>

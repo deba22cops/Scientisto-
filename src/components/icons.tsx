@@ -18,7 +18,7 @@ export function ScientoLogo(props: SVGProps<SVGSVGElement>) {
         fill="hsl(var(--primary))"
         className="font-headline"
       >
-        Genexto
+        Scientisto
       </text>
       <text
         x="155"

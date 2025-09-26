@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'Genexto - AI Research Assistant',
+  title: 'Scientisto - AI Research Assistant',
   description: 'YOUR FRIENDLY RESEARCHER',
 };
 

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,19 +11,18 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { GoogleLogo } from "@/components/icons";
 import { useAuth } from "@/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 
 const formSchema = z.object({
@@ -32,16 +32,13 @@ const formSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be at least 8 characters.",
   }),
-  confirmPassword: z.string(),
-  acceptTerms: z.boolean().refine(val => val === true, {
-    message: "You must accept the terms and privacy policy.",
-  }),
-}).refine(data => data.password === data.confirmPassword, {
+}).refine(data => data.password, {
   message: "Passwords don't match.",
   path: ["confirmPassword"],
 });
 
 export function SignUpForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const auth = useAuth();
@@ -51,28 +48,31 @@ export function SignUpForm() {
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
-      acceptTerms: false,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     // Simulate API call
     console.log(values);
-    toast({
-      title: "Account Created",
-      description: "Redirecting to your dashboard...",
-    });
-    router.push("/dashboard");
+    setTimeout(() => {
+        toast({
+            title: "Account Created",
+            description: "Redirecting to your dashboard...",
+        });
+        router.push("/dashboard");
+        setIsLoading(false);
+    }, 1000);
   }
 
   const handleGoogleSignIn = async () => {
+    setIsLoading(true);
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       toast({
         title: "Account Created",
-        description: "Redirecting to your dashboard...",
+        description: "You're now signed in.",
       });
       router.push("/dashboard");
     } catch (error) {
@@ -82,21 +82,27 @@ export function SignUpForm() {
         title: "Sign-up Failed",
         description: "Could not sign up with Google. Please try again.",
       });
+    } finally {
+        setIsLoading(false);
     }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-headline">Create an Account</CardTitle>
-        <CardDescription>Get started with your AI research assistant.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button variant="outline" className="w-full mb-4" onClick={handleGoogleSignIn}>
-          <GoogleLogo className="mr-2 h-4 w-4" />
-          Sign up with Google
+    <div className="w-full space-y-6">
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
+             {isLoading ? <Loader2 className="mr-2 animate-spin" /> : <GoogleLogo className="mr-2" />}
+            Sign up with Google
         </Button>
-        <Separator className="my-4" />
+        <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                    Or continue with
+                </span>
+            </div>
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -106,7 +112,7 @@ export function SignUpForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="name@example.com" {...field} disabled={isLoading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -119,58 +125,24 @@ export function SignUpForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="acceptTerms"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md py-2">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Accept terms and privacy policy
-                    </FormLabel>
-                    <FormDescription>
-                      You agree to our Terms of Service and Privacy Policy.
-                    </FormDescription>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full">Create Account</Button>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 animate-spin" />}
+              Create Account
+            </Button>
           </form>
         </Form>
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login" className="font-medium text-primary hover:underline">
             Sign in
           </Link>
         </p>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

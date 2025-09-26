@@ -1,3 +1,4 @@
+
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -40,8 +41,8 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.photoURL || "/avatars/01.png"} alt={user?.displayName || "@user"} />
-            <AvatarFallback>{user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
+            <AvatarImage src={user?.photoURL || ""} alt={user?.displayName || "@user"} />
+            <AvatarFallback>{user?.displayName?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -57,13 +58,13 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="#">Profile</Link>
+            <Link href="/dashboard/account">Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="#">Billing</Link>
+            <Link href="#">Billing (soon)</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="#">Settings</Link>
+            <Link href="/dashboard/settings">Settings (soon)</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -6,19 +7,30 @@ import { DocumentPreview } from "@/components/dashboard/document-preview";
 import type { GenerateDocumentFromPromptInput, GenerateDocumentFromPromptOutput } from "@/ai/flows/generate-document-from-prompt";
 import { handleGeneration } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/firebase";
 
 export default function DashboardPage() {
+  const { user } = useUser();
   const [generationResult, setGenerationResult] = useState<GenerateDocumentFromPromptOutput | null>(null);
   const [currentPrompt, setCurrentPrompt] = useState<GenerateDocumentFromPromptInput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const onGenerate = async (data: GenerateDocumentFromPromptInput) => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: "You must be logged in to generate a document.",
+      });
+      return;
+    }
+    
     setIsLoading(true);
     setGenerationResult(null);
     setCurrentPrompt(data);
 
-    const result = await handleGeneration(data);
+    const result = await handleGeneration({ ...data, userId: user.uid });
 
     if (result.success && result.data) {
       setGenerationResult(result.data);

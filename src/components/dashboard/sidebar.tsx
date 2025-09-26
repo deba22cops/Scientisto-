@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -16,18 +17,17 @@ import {
   Settings,
   Bot,
 } from "lucide-react";
-import { ScientoLogo } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "New Research" },
-  { href: "#", icon: History, label: "History" },
-  { href: "#", icon: Star, label: "Saved" },
-  { href: "#", icon: FileText, label: "Templates" },
+  { href: "/dashboard/history", icon: History, label: "History" },
+  { href: "/dashboard/saved", icon: Star, label: "Saved" },
+  { href: "/dashboard/templates", icon: FileText, label: "Templates" },
 ];
 
 const bottomNavItems = [
-    { href: "#", icon: Settings, label: "Account" },
+    { href: "/dashboard/account", icon: Settings, label: "Account" },
 ];
 
 export function DashboardSidebar() {
@@ -70,7 +70,12 @@ export function DashboardSidebar() {
               <TooltipTrigger asChild>
                 <Link
                   href={item.href}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8",
+                     pathname === item.href
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
                 >
                   <item.icon className="h-5 w-5" />
                   <span className="sr-only">{item.label}</span>

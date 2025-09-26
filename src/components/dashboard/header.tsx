@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import {
   Sheet,
@@ -18,10 +19,10 @@ import { ScientoLogo } from "@/components/icons";
 
 const mobileNavItems = [
   { href: "/dashboard", icon: Home, label: "New Research" },
-  { href: "#", icon: History, label: "History" },
-  { href: "#", icon: Star, label: "Saved" },
-  { href: "#", icon: FileText, label: "Templates" },
-  { href: "#", icon: Settings, label: "Account" },
+  { href: "/dashboard/history", icon: History, label: "History" },
+  { href: "/dashboard/saved", icon: Star, label: "Saved" },
+  { href: "/dashboard/templates", icon: FileText, label: "Templates" },
+  { href: "/dashboard/account", icon: Settings, label: "Account" },
 ];
 
 export function DashboardHeader() {

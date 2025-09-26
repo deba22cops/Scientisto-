@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: 'Scientisto - AI Research Assistant',
-  description: 'Deep research, instant deliverables.',
+  description: 'YOUR FREINDLY RESEARCHER',
 };
 
 export default function RootLayout({

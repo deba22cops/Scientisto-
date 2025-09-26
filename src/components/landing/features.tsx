@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Zap, FileDown, LayoutDashboard } from "lucide-react";
+import { Zap, FileDown, LayoutDashboard, Feather } from "lucide-react";
 
 const features = [
   {
@@ -13,16 +13,21 @@ const features = [
     description: "Easily download your generated documents in standard formats, ready for sharing and editing.",
   },
   {
+    icon: <Feather className="h-8 w-8 text-primary" />,
+    title: "Story Generator (Coming Soon)",
+    description: "Unleash your creativity with a powerful tool for crafting compelling narratives, scripts, and more.",
+  },
+  {
     icon: <LayoutDashboard className="h-8 w-8 text-primary" />,
     title: "Personal Dashboard",
-    description: "Keep track of your research history, manage your documents, and save prompts for future use.",
+    description: "Keep track of your research, manage your documents, and save prompts for future use.",
   },
 ];
 
 export function Features() {
   return (
     <section id="features" className="container mx-auto py-16 sm:py-24">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {features.map((feature, index) => (
           <Card key={index} className="text-center">
             <CardHeader>

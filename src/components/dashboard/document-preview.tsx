@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileDown, Bot, FileType, FileX } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { GenerateDocumentFromPromptOutput } from "@/ai/flows/generate-document-from-prompt";
+import { useToast } from "@/hooks/use-toast";
 
 type DocumentPreviewProps = {
   result: GenerateDocumentFromPromptOutput | null;
@@ -92,7 +93,19 @@ function LoadingSkeleton() {
 }
 
 export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreviewProps) {
+  const { toast } = useToast();
   const formattedDocument = result?.document.replace(/\n/g, '<br />');
+
+  const handleExport = (format: 'DOCX' | 'PDF') => {
+    if (!result) return;
+    // This is a simulated export.
+    console.log(`Exporting document as ${format}...`);
+    console.log(result.document);
+    toast({
+      title: `Exporting as ${format}`,
+      description: `Your document is being prepared for ${format} export.`,
+    });
+  };
 
   return (
     <Card className="h-full flex flex-col">
@@ -109,17 +122,17 @@ export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreview
           {result && (
             <div className="p-4 sm:p-6">
                 <p className="text-xs text-muted-foreground mb-4">{result.progress}</p>
-                {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: formattedDocument || '' }} />}
+                {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm max-w-none whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: result.document || '' }} />}
             </div>
           )}
         </ScrollArea>
       </CardContent>
       <CardFooter className="justify-end gap-2">
-        <Button variant="outline" disabled={!result || isLoading}>
+        <Button variant="outline" disabled={!result || isLoading} onClick={() => handleExport('DOCX')}>
           <FileDown className="mr-2 h-4 w-4" />
           Export as DOCX
         </Button>
-        <Button disabled={!result || isLoading}>
+        <Button disabled={!result || isLoading} onClick={() => handleExport('PDF')}>
           <FileDown className="mr-2 h-4 w-4" />
           Export as PDF
         </Button>

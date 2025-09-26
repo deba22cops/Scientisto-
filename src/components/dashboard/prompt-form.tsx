@@ -49,6 +49,7 @@ const formSchema = z.object({
     message: "Prompt cannot be longer than 500 characters."
   }),
   format: z.enum(['PRD', 'Research paper', 'Essay']),
+  prdType: z.enum(['Tech', 'Non-Tech']).optional(),
   topicKeywords: z.string().optional(),
   desiredDepth: z.enum(['Quick', 'Standard', 'Deep']),
   targetAudience: z.string().optional(),
@@ -76,6 +77,8 @@ export function PromptForm({ onGenerate, isLoading }: PromptFormProps) {
       referencesStyle: 'No links',
     },
   });
+
+  const watchFormat = form.watch("format");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     onGenerate(values);
@@ -167,6 +170,39 @@ export function PromptForm({ onGenerate, isLoading }: PromptFormProps) {
                 )}
               />
             </div>
+            
+            {watchFormat === 'PRD' && (
+              <FormField
+                control={form.control}
+                name="prdType"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>PRD Type</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Tech" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Tech</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Non-Tech" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Non-Tech</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}

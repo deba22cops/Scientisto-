@@ -16,6 +16,10 @@ const GenerateDocumentFromPromptInputSchema = z.object({
   format: z
     .enum(['PRD', 'Research paper', 'Essay'])
     .describe('The format of the document to generate.'),
+  prdType: z
+    .enum(['Tech', 'Non-Tech'])
+    .optional()
+    .describe('The type of PRD to generate, if the format is PRD.'),
   topicKeywords: z.string().optional().describe('Optional topic keywords.'),
   desiredDepth: z
     .enum(['Quick', 'Standard', 'Deep'])
@@ -55,6 +59,14 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI research assistant that generates documents from prompts.
 
   Generate a document in the following format: {{{format}}}.
+
+  {{#if prdType}}
+  This is a {{{prdType}}} PRD.
+  {{#if (eq prdType "Tech")}}
+  When generating a Tech PRD, ensure the document is very lengthy, well-structured, and includes a detailed "Tech Stack" section.
+  The output should be clean text, without any markdown symbols like '#' or '*'. Use line breaks for structure.
+  {{/if}}
+  {{/if}}
 
   Prompt: {{{prompt}}}
 

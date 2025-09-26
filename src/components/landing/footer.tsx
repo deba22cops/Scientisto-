@@ -10,18 +10,18 @@ const socialLinks = [
 
 const footerLinks = {
   "Product": [
-    { href: "#features", label: "Features" },
+    { href: "/#features", label: "Features" },
     { href: "/signup", label: "Get Started" },
-    { href: "#", label: "Pricing" },
+    { href: "/pricing", label: "Pricing" },
   ],
   "Company": [
-    { href: "#", label: "About Us" },
-    { href: "#", label: "Careers" },
-    { href: "#", label: "Contact" },
+    { href: "/about", label: "About Us" },
+    { href: "/careers", label: "Careers" },
+    { href: "/contact", label: "Contact" },
   ],
   "Legal": [
-    { href: "#", label: "Privacy Policy" },
-    { href: "#", label: "Terms of Service" },
+    { href: "/privacy-policy", label: "Privacy Policy" },
+    { href: "/terms-of-service", label: "Terms of Service" },
   ],
 };
 

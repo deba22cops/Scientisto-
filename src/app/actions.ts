@@ -11,9 +11,9 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 export async function handleGeneration(
   input: GenerateDocumentFromPromptInput & { userId: string }
-): Promise<{ success: boolean; data?: GenerateDocumentFromPromptOutput; error?: string }> {
+): Promise<{ success: boolean; data?: GenerateDocumentFromPromptOutput & { documentId: string }; error?: string }> {
   const { userId, ...promptInput } = input;
-  if (!userId) {
+  if (!user) {
     return { success: false, error: 'User is not authenticated.' };
   }
 
@@ -22,25 +22,61 @@ export async function handleGeneration(
     await new Promise(resolve => setTimeout(resolve, 1000));
     const result = await generateDocumentFromPrompt(promptInput);
 
-    // Save prompt to history on successful generation
+    // Save prompt and generated document to history on successful generation
     try {
       const adminApp = getAdminApp();
       const firestore = getFirestore(adminApp);
-      const promptRef = firestore.collection('users').doc(userId).collection('prompts').doc();
+      const userRef = firestore.collection('users').doc(userId);
+      
+      const promptRef = userRef.collection('prompts').doc();
       await promptRef.set({
         ...promptInput,
         createdAt: new Date().toISOString(),
         id: promptRef.id,
       });
+
+      const docRef = userRef.collection('generatedDocuments').doc();
+      await docRef.set({
+        id: docRef.id,
+        promptId: promptRef.id,
+        userId: userId,
+        documentName: promptInput.prompt.substring(0, 50), // Use start of prompt as name
+        documentContent: result.document,
+        format: promptInput.format,
+        timestamp: new Date().toISOString(),
+      });
+      
+      return { success: true, data: { ...result, documentId: docRef.id } };
+
     } catch (dbError) {
-      console.error('Failed to save prompt to history:', dbError);
+      console.error('Failed to save document to history:', dbError);
       // We don't fail the whole operation if history saving fails, but we could add more robust logging.
+       return { success: true, data: { ...result, documentId: '' } }; // Proceed without a doc id
     }
 
-    return { success: true, data: result };
   } catch (error) {
     console.error(error);
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
     return { success: false, error: `Failed to generate document: ${errorMessage}` };
   }
+}
+
+export async function deleteDocument(userId: string, documentId: string): Promise<{success: boolean, error?: string}> {
+    if (!userId) {
+        return { success: false, error: 'User is not authenticated.' };
+    }
+    if (!documentId) {
+        return { success: false, error: 'Document ID is missing.' };
+    }
+
+    try {
+        const adminApp = getAdminApp();
+        const firestore = getFirestore(adminApp);
+        await firestore.collection('users').doc(userId).collection('generatedDocuments').doc(documentId).delete();
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to delete document:', error);
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+        return { success: false, error: `Failed to delete document: ${errorMessage}` };
+    }
 }

@@ -221,7 +221,7 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 min-h-0">
-        <ScrollArea className="h-full rounded-md border p-1">
+        <ScrollArea className="h-[70vh] lg:h-full rounded-md border p-1">
           {isLoading && !result && <GenerationProgress onCancel={onCancel} />}
           {!isLoading && !result && <InitialState />}
           {result && (

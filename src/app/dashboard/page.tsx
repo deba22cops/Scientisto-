@@ -62,10 +62,10 @@ export default function DashboardPage() {
 
   return (
     <div className="grid lg:grid-cols-2 gap-8 items-start">
-      <div className="h-full lg:h-[calc(100vh-theme(spacing.20))]">
+      <div>
         <PromptForm onGenerate={onGenerate} isLoading={isLoading} />
       </div>
-      <div className="h-full lg:h-[calc(100vh-theme(spacing.20))]">
+      <div>
         <DocumentPreview 
           result={generationResult} 
           isLoading={isLoading} 

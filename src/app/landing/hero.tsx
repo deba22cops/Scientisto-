@@ -9,7 +9,7 @@ export function Hero() {
   return (
     <section className="relative container mx-auto text-center py-16 sm:py-24 overflow-hidden">
       <ParticleBackground />
-      <div className="grid lg:grid-cols-2 gap-8 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         <div className="relative z-10 animate-fade-in-up text-center lg:text-left">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-headline tracking-tighter">
             <span className="font-brand text-primary">Scientisto</span> — YOUR FREINDLY RESEARCHER

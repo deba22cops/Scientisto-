@@ -22,10 +22,10 @@ export function Hero() {
           </Button>
           <SampleOutputsModal />
         </div>
-        <div className="mt-16 px-4">
-          <div className="relative mx-auto max-w-5xl h-[400px] sm:h-[500px] lg:h-[600px]">
-            <HeroAnimation />
-          </div>
+      </div>
+      <div className="mt-16 px-4">
+        <div className="relative mx-auto max-w-5xl h-[400px] sm:h-[500px] lg:h-[600px]">
+          <HeroAnimation />
         </div>
       </div>
     </section>

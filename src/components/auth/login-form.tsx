@@ -6,7 +6,6 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Chrome } from "lucide-react";
+import { useAuth } from "@/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -33,6 +34,7 @@ const formSchema = z.object({
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const auth = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,7 +44,7 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Simulate API call
     console.log(values);
     toast({
@@ -51,6 +53,25 @@ export function LoginForm() {
     });
     router.push("/dashboard");
   }
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      toast({
+        title: "Login Successful",
+        description: "Redirecting to your dashboard...",
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: "Could not sign in with Google. Please try again.",
+      });
+    }
+  };
 
   return (
     <Card>
@@ -91,7 +112,7 @@ export function LoginForm() {
           </form>
         </Form>
         <Separator className="my-6" />
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
             <Chrome className="mr-2 h-4 w-4" />
             Sign in with Google
         </Button>

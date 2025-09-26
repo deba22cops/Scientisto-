@@ -6,7 +6,6 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,6 +21,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Chrome } from "lucide-react";
+import { useAuth } from "@/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 
 const formSchema = z.object({
@@ -43,6 +44,7 @@ const formSchema = z.object({
 export function SignUpForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const auth = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,6 +66,25 @@ export function SignUpForm() {
     router.push("/dashboard");
   }
 
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      toast({
+        title: "Account Created",
+        description: "Redirecting to your dashboard...",
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Sign-up Failed",
+        description: "Could not sign up with Google. Please try again.",
+      });
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -71,6 +92,11 @@ export function SignUpForm() {
         <CardDescription>Get started with your AI research assistant.</CardDescription>
       </CardHeader>
       <CardContent>
+        <Button variant="outline" className="w-full mb-4" onClick={handleGoogleSignIn}>
+          <Chrome className="mr-2 h-4 w-4" />
+          Sign up with Google
+        </Button>
+        <Separator className="my-4" />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField

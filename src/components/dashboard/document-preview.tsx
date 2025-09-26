@@ -15,6 +15,9 @@ import { FileDown, Bot, FileType, FileX } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { GenerateDocumentFromPromptOutput } from "@/ai/flows/generate-document-from-prompt";
 import { useToast } from "@/hooks/use-toast";
+import { Document, Packer, Paragraph, TextRun } from "docx";
+import jsPDF from "jspdf";
+import htmlToPdfmake from "html-to-pdfmake";
 
 type DocumentPreviewProps = {
   result: GenerateDocumentFromPromptOutput | null;
@@ -94,17 +97,57 @@ function LoadingSkeleton() {
 
 export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreviewProps) {
   const { toast } = useToast();
-  const formattedDocument = result?.document.replace(/\n/g, '<br />');
 
   const handleExport = (format: 'DOCX' | 'PDF') => {
-    if (!result) return;
-    // This is a simulated export.
-    console.log(`Exporting document as ${format}...`);
-    console.log(result.document);
+    if (!result || !result.document) return;
+
     toast({
       title: `Exporting as ${format}`,
       description: `Your document is being prepared for ${format} export.`,
     });
+
+    if (format === 'DOCX') {
+      const doc = new Document({
+        sections: [{
+          properties: {},
+          children: result.document.split('\n').map(p => new Paragraph({
+            children: [new TextRun(p)]
+          }))
+        }]
+      });
+
+      Packer.toBlob(doc).then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "document.docx";
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      });
+    } else if (format === 'PDF') {
+      const doc = new jsPDF();
+      const pdfContent = htmlToPdfmake(result.document.replace(/\n/g, '<br/>'));
+      
+      const documentDefinition = {
+        content: pdfContent
+      };
+      
+      // Since html-to-pdfmake doesn't integrate directly with jspdf in the way we want,
+      // we'll use jspdf's html method for simplicity, as it's more direct for this case.
+      // NOTE: This will not be perfect and might lose some styling.
+      // For a more robust solution, pdfmake itself would be used.
+      doc.html(result.document.replace(/\n/g, '<br/>'), {
+        callback: function(doc) {
+          doc.save("document.pdf");
+        },
+        x: 10,
+        y: 10,
+        width: 180,
+        windowWidth: 650
+      });
+    }
   };
 
   return (
@@ -120,7 +163,7 @@ export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreview
           {isLoading && !result && <GenerationProgress onCancel={onCancel} />}
           {!isLoading && !result && <InitialState />}
           {result && (
-            <div className="p-4 sm:p-6">
+            <div className="p-4 sm:p-6" id="document-content">
                 <p className="text-xs text-muted-foreground mb-4">{result.progress}</p>
                 {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm max-w-none whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: result.document || '' }} />}
             </div>

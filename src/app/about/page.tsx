@@ -13,7 +13,7 @@ export default function AboutPage() {
           <ParticleBackground />
           <div className="relative z-10 animate-fade-in-up">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-headline tracking-tighter">
-              About Genexto
+              About Scientisto
             </h1>
             <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
               We are on a mission to revolutionize the research process, making it faster, smarter, and more accessible for everyone.
@@ -37,9 +37,9 @@ export default function AboutPage() {
                     <div className="md:col-span-2">
                         <h2 className="text-3xl font-bold font-headline mb-4">Meet Our Founder</h2>
                         <h3 className="text-2xl font-semibold text-primary mb-2">Debabrata Behera</h3>
-                        <p className="text-lg text-muted-foreground mb-4">A young entrepreneur at the age of 21, Debabrata is the visionary behind Genexto.</p>
+                        <p className="text-lg text-muted-foreground mb-4">A young entrepreneur at the age of 21, Debabrata is the visionary behind Scientisto.</p>
                         <p className="mb-4">He founded DB Groups with a passion for technology and innovation. Under DB Groups, he established the SynapseDev Network, a powerhouse for providing cutting-edge tech solutions to complex problems.</p>
-                        <p>Genexto is the flagship creation of the SynapseDev Network, embodying our commitment to building tools that empower creators, researchers, and thinkers around the world.</p>
+                        <p>Scientisto is the flagship creation of the SynapseDev Network, embodying our commitment to building tools that empower creators, researchers, and thinkers around the world.</p>
                     </div>
                 </div>
             </Card>
@@ -49,7 +49,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent className="prose prose-invert max-w-4xl mx-auto text-muted-foreground text-lg">
                   <p>
-                      Founded in August 2025, Genexto was born from a simple yet powerful idea: what if anyone could conduct deep, comprehensive research in minutes, not months? Our founder, Debabrata Behera, saw brilliant minds—students, entrepreneurs, and professionals—bogged down by the tedious process of information gathering and document formatting.
+                      Founded in August 2025, Scientisto was born from a simple yet powerful idea: what if anyone could conduct deep, comprehensive research in minutes, not months? Our founder, Debabrata Behera, saw brilliant minds—students, entrepreneurs, and professionals—bogged down by the tedious process of information gathering and document formatting.
                   </p>
                   <p>
                       The true bottleneck to innovation wasn't a lack of ideas, but a lack of time.
@@ -58,7 +58,7 @@ export default function AboutPage() {
                       From our early days as a project within SynapseDev Networks, we were driven to solve this problem. We envisioned an AI companion that could understand a user's intent from a simple prompt, scour the world's knowledge, and deliver a structured, high-quality document in a fraction of the time. The goal was never to replace human intellect, but to augment it—to free up creators and thinkers to do what they do best: innovate, analyze, and create.
                   </p>
                   <p>
-                      Today, Genexto is more than just a tool; it's a partner in creation. We are tirelessly working to expand its capabilities, from generating technical PRDs to crafting creative stories and comics. Our mission is to democratize the power of research and creation for everyone.
+                      Today, Scientisto is more than just a tool; it's a partner in creation. We are tirelessly working to expand its capabilities, from generating technical PRDs to crafting creative stories and comics. Our mission is to democratize the power of research and creation for everyone.
                   </p>
               </CardContent>
             </Card>

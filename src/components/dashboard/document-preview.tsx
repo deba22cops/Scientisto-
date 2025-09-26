@@ -55,7 +55,7 @@ function GenerationProgress({ onCancel }: { onCancel: () => void }) {
         {progressMessages[progressIndex]}
       </p>
       <p className="text-sm text-muted-foreground mt-2">
-        This may take a moment. Please don&apos;t close this window.
+        This may take a moment. Please don't close this window.
       </p>
       <Button variant="outline" className="mt-6" onClick={onCancel}>
         <FileX className="mr-2 h-4 w-4" />

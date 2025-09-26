@@ -160,30 +160,39 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
       const doc = new jsPDF();
       doc.setFont("Times-Roman");
       const pageHeight = doc.internal.pageSize.height;
+      const pageWidth = doc.internal.pageSize.width;
       const margin = 15;
       let y = margin + 10;
       
       const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
       
       // Add watermark/header to each page
-      const addHeader = (pageNum: number) => {
+      const addHeaderAndFooter = (pageNum: number) => {
+        // Header
         doc.setFontSize(10);
         doc.setTextColor(46, 100, 254); // Blue color
         doc.setFont("Times-Roman", "bold");
-        doc.text("Scientisto", doc.internal.pageSize.width - margin, margin, { align: "right" });
-        doc.setTextColor(0, 0, 0); // Reset color
+        doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
+        
+        // Footer
+        doc.setTextColor(128, 0, 128); // Purple color
+        doc.setFont("Times-Roman", "normal");
+        doc.text("made with Scientisto AI", pageWidth / 2, pageHeight - margin + 10, { align: "center" });
+
+        // Reset text color and font
+        doc.setTextColor(0, 0, 0); 
         doc.setFont("Times-Roman", "normal");
         doc.setFontSize(12);
       }
 
-      addHeader(1);
+      addHeaderAndFooter(1);
 
       lines.forEach((line: string) => {
           const isHeading = line.length < 100 && !line.endsWith('.') && line.trim().length > 0;
           
           if (y + 10 > pageHeight - margin) {
               doc.addPage();
-              addHeader(doc.internal.pages.length);
+              addHeaderAndFooter(doc.internal.pages.length);
               y = margin + 10; // Reset y for new page
           }
           if(isHeading) {
@@ -231,3 +240,5 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
     </Card>
   );
 }
+
+    

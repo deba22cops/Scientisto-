@@ -9,12 +9,14 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardPage() {
   const [generationResult, setGenerationResult] = useState<GenerateDocumentFromPromptOutput | null>(null);
+  const [currentPrompt, setCurrentPrompt] = useState<GenerateDocumentFromPromptInput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const onGenerate = async (data: GenerateDocumentFromPromptInput) => {
     setIsLoading(true);
     setGenerationResult(null);
+    setCurrentPrompt(data);
 
     const result = await handleGeneration(data);
 
@@ -39,6 +41,7 @@ export default function DashboardPage() {
     // This is a client-side cancellation. A more robust solution would involve AbortController.
     setIsLoading(false);
     setGenerationResult(null);
+    setCurrentPrompt(null);
     toast({
       title: "Generation Cancelled",
       description: "The document generation process has been stopped.",
@@ -51,7 +54,7 @@ export default function DashboardPage() {
         <PromptForm onGenerate={onGenerate} isLoading={isLoading} />
       </div>
       <div className="h-full">
-        <DocumentPreview result={generationResult} isLoading={isLoading} onCancel={onCancel} />
+        <DocumentPreview result={generationResult} isLoading={isLoading} onCancel={onCancel} prompt={currentPrompt?.prompt} />
       </div>
     </div>
   );

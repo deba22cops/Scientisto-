@@ -22,6 +22,7 @@ type DocumentPreviewProps = {
   result: GenerateDocumentFromPromptOutput | null;
   isLoading: boolean;
   onCancel: () => void;
+  prompt: string | undefined;
 };
 
 const progressMessages = [
@@ -94,11 +95,17 @@ function LoadingSkeleton() {
     )
 }
 
-export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreviewProps) {
+export function DocumentPreview({ result, isLoading, onCancel, prompt }: DocumentPreviewProps) {
   const { toast } = useToast();
+
+  const getFileName = () => {
+    return prompt ? prompt.substring(0, 30).replace(/[^a-zA-Z0-9]/g, '_') : 'document';
+  }
 
   const handleExport = (format: 'DOCX' | 'PDF') => {
     if (!result || !result.document) return;
+
+    const fileName = getFileName();
 
     toast({
       title: `Exporting as ${format}`,
@@ -119,7 +126,7 @@ export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreview
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "document.docx";
+        a.download = `${fileName}.docx`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -128,11 +135,22 @@ export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreview
     } else if (format === 'PDF') {
       const doc = new jsPDF();
       
-      // The `html-to-pdfmake` and direct `doc.html` methods were unreliable.
-      // A more robust approach is to use jspdf's built-in text method, handling line breaks manually.
-      const lines = doc.splitTextToSize(result.document, 180); // 180mm width for A4 page with margins
-      doc.text(lines, 15, 15);
-      doc.save("document.pdf");
+      const pageHeight = doc.internal.pageSize.height;
+      const margin = 15;
+      let y = margin;
+      
+      const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
+      
+      lines.forEach((line: string) => {
+          if (y + 10 > pageHeight - margin) {
+              doc.addPage();
+              y = margin;
+          }
+          doc.text(line, margin, y);
+          y += 7; 
+      });
+
+      doc.save(`${fileName}.pdf`);
     }
   };
 

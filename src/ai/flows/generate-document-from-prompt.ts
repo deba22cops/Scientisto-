@@ -29,8 +29,9 @@ const GenerateDocumentFromPromptInputSchema = z.object({
   toneStyle: z
     .enum(['Formal', 'Conversational', 'Academic'])
     .describe('The tone and style of the document.'),
-  referencesStyle:
-    z.enum(['No links']).describe('The reference style of the document.'),
+  referencesStyle: z
+    .enum(['No links'])
+    .describe('The reference style of the document.'),
 });
 
 export type GenerateDocumentFromPromptInput = z.infer<
@@ -61,12 +62,14 @@ const generateDocumentFromPromptFlow = ai.defineFlow(
   async input => {
     let promptText = `You are an AI research assistant that generates documents from prompts.
 
+    The output should be clean text, without any markdown symbols like '#' or '*'. Use line breaks for structure.
+
     Generate a document in the following format: ${input.format}.`;
 
     if (input.prdType) {
       promptText += `\nThis is a ${input.prdType} PRD.`;
       if (input.prdType === 'Tech') {
-        promptText += `\nWhen generating a Tech PRD, ensure the document is very lengthy, well-structured, and includes a detailed "Tech Stack" section.\nThe output should be clean text, without any markdown symbols like '#' or '*'. Use line breaks for structure.`;
+        promptText += `\nWhen generating a Tech PRD, ensure the document is very lengthy, well-structured, and includes a detailed "Tech Stack" section.`;
       }
     }
 

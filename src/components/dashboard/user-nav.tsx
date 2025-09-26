@@ -16,6 +16,29 @@ import { useRouter } from "next/navigation";
 import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 
+// Function to generate a simple hash code from a string
+const getHashCode = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+// Function to generate a color from a string
+const stringToColor = (str: string) => {
+  const hash = getHashCode(str);
+  let color = '#';
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xFF;
+    color += ('00' + value.toString(16)).substr(-2);
+  }
+  return color;
+};
+
+
 export function UserNav() {
   const router = useRouter();
   const auth = useAuth();
@@ -25,6 +48,18 @@ export function UserNav() {
     await signOut(auth);
     router.push("/");
   };
+
+  const getInitials = (name?: string | null) => {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+  
+  const fallbackColor = user?.email ? stringToColor(user.email) : '#cccccc';
+
 
   if (isUserLoading) {
     return (
@@ -42,7 +77,7 @@ export function UserNav() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage src={user?.photoURL || ""} alt={user?.displayName || "@user"} />
-            <AvatarFallback>{user?.displayName?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+            <AvatarFallback style={{ backgroundColor: fallbackColor }}>{getInitials(user?.displayName)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -64,7 +99,7 @@ export function UserNav() {
             <Link href="#">Billing (soon)</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings">Settings (soon)</Link>
+            <Link href="/dashboard/account">Settings</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

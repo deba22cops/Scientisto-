@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -15,7 +16,7 @@ import { FileDown, Bot, FileType, FileX } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { GenerateDocumentFromPromptOutput } from "@/ai/flows/generate-document-from-prompt";
 import { useToast } from "@/hooks/use-toast";
-import { Document, Packer, Paragraph, TextRun } from "docx";
+import { Document, Packer, Paragraph, TextRun, Header, Footer, AlignmentType, ShadingType } from "docx";
 import jsPDF from "jspdf";
 
 type DocumentPreviewProps = {
@@ -115,10 +116,33 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
     if (format === 'DOCX') {
       const doc = new Document({
         sections: [{
-          properties: {},
-          children: result.document.split('\n').map(p => new Paragraph({
-            children: [new TextRun(p)]
-          }))
+          headers: {
+            default: new Header({
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: "Scientisto",
+                      color: "2E64FE",
+                      font: "Times New Roman",
+                      bold: true,
+                    })
+                  ],
+                  alignment: AlignmentType.RIGHT,
+                })
+              ],
+            }),
+          },
+          children: result.document.split('\n').map(p => {
+            const isHeading = p.length < 100 && !p.endsWith('.') && p.trim().length > 0;
+            return new Paragraph({
+              children: [new TextRun({ 
+                text: p, 
+                font: "Times New Roman",
+                bold: isHeading 
+              })]
+            })
+          })
         }]
       });
 
@@ -134,19 +158,39 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
       });
     } else if (format === 'PDF') {
       const doc = new jsPDF();
-      
+      doc.setFont("Times-Roman");
       const pageHeight = doc.internal.pageSize.height;
       const margin = 15;
-      let y = margin;
+      let y = margin + 10;
       
       const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
       
+      // Add watermark/header to each page
+      const addHeader = (pageNum: number) => {
+        doc.setFontSize(10);
+        doc.setTextColor(46, 100, 254); // Blue color
+        doc.setFont("Times-Roman", "bold");
+        doc.text("Scientisto", doc.internal.pageSize.width - margin, margin, { align: "right" });
+        doc.setTextColor(0, 0, 0); // Reset color
+        doc.setFont("Times-Roman", "normal");
+        doc.setFontSize(12);
+      }
+
+      addHeader(1);
+
       lines.forEach((line: string) => {
+          const isHeading = line.length < 100 && !line.endsWith('.') && line.trim().length > 0;
+          
           if (y + 10 > pageHeight - margin) {
               doc.addPage();
-              y = margin;
+              addHeader(doc.internal.pages.length);
+              y = margin + 10; // Reset y for new page
+          }
+          if(isHeading) {
+            doc.setFont("Times-Roman", "bold");
           }
           doc.text(line, margin, y);
+          doc.setFont("Times-Roman", "normal");
           y += 7; 
       });
 

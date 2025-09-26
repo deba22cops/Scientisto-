@@ -16,7 +16,7 @@ import { FileDown, Bot, FileType, FileX } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { GenerateDocumentFromPromptInput, GenerateDocumentFromPromptOutput } from "@/ai/flows/generate-document-from-prompt";
 import { useToast } from "@/hooks/use-toast";
-import { Document, Packer, Paragraph, TextRun, Header, Footer, AlignmentType, ImageRun } from "docx";
+import { Document, Packer, Paragraph, TextRun, Header, AlignmentType } from "docx";
 import jsPDF from "jspdf";
 
 type DocumentPreviewProps = {
@@ -164,18 +164,16 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
       const margin = 15;
       let y = margin;
       
-      const totalPages = Math.ceil(doc.getTextDimensions(result.document, {
-          maxWidth: pageWidth - margin * 2
-      }).h / (pageHeight - margin * 2)) +1;
-
-      // First Page Header
+      // Header for all pages
+      for (let i = 1; i <= doc.internal.pages.length; i++) {
+        doc.setPage(i);
+        doc.setFontSize(12);
+        doc.setTextColor(128, 0, 128); // Purple color
+        doc.setFont("Times-Roman", "bold");
+        doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
+      }
       doc.setPage(1);
-      
-      doc.setFontSize(24);
-      doc.setTextColor(128, 0, 128); // Purple color
-      doc.setFont("Times-Roman", "bold");
-      doc.text("Scientisto", pageWidth - margin, y, { align: "right" });
-      y += 10; 
+      y += 10;
       
       
       doc.setTextColor(0, 0, 0); 
@@ -184,12 +182,20 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
 
       const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
 
-      lines.forEach((line: string, index: number) => {
+      lines.forEach((line: string) => {
           const isHeading = line.length < 100 && !line.endsWith('.') && line.trim().length > 0;
           
           if (y + 10 > pageHeight - margin) {
               doc.addPage();
               y = margin + 10; // Reset y for new page
+              // Add header to new page
+              doc.setFontSize(12);
+              doc.setTextColor(128, 0, 128); // Purple color
+              doc.setFont("Times-Roman", "bold");
+              doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
+              doc.setTextColor(0, 0, 0); 
+              doc.setFont("Times-Roman", "normal");
+              doc.setFontSize(12);
           }
           if(isHeading) {
             doc.setFont("Times-Roman", "bold");
@@ -199,14 +205,13 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
           y += 7; 
       });
 
-      // Add footer to the last page
-      for (let i = 1; i <= doc.internal.pages.length; i++) {
-        doc.setPage(i);
-        doc.setFontSize(10);
-        doc.setTextColor(128, 0, 128);
-        doc.setFont("Times-Roman", "normal");
-        doc.text(`Researched with Scientisto AI - Page ${i} of ${totalPages - 1}`, pageWidth / 2, pageHeight - margin + 10, { align: "center" });
-      }
+      // Add footer ONLY to the last page
+      const pageCount = doc.internal.pages.length;
+      doc.setPage(pageCount);
+      doc.setFontSize(10);
+      doc.setTextColor(128, 0, 128);
+      doc.setFont("Times-Roman", "normal");
+      doc.text(`Researched with Scientisto AI - Page ${pageCount} of ${pageCount}`, pageWidth / 2, pageHeight - margin + 10, { align: "center" });
 
       doc.save(`${fileName}.pdf`);
     }
@@ -221,7 +226,7 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 min-h-0">
-        <ScrollArea className="h-[70vh] lg:h-full rounded-md border p-1">
+        <ScrollArea className="h-full rounded-md border p-1">
           {isLoading && !result && <GenerationProgress onCancel={onCancel} />}
           {!isLoading && !result && <InitialState />}
           {result && (

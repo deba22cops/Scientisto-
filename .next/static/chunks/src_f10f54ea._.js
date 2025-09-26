@@ -643,7 +643,7 @@ const FirebaseProvider = ({ children, firebaseApp, firestore, auth })=>{
         columnNumber: 5
     }, this);
 };
-_s(FirebaseProvider, "OHe6bVjVSw9ThvW0Yh4MUWnvKSA=");
+_s(FirebaseProvider, "52IF9MCA7AiodNrCM5JSqw906xQ=");
 _c = FirebaseProvider;
 const useFirebase = ()=>{
     _s1();

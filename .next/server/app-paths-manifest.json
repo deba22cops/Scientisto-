@@ -1,13 +1,10 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/about/page": "app/about/page.js",
-  "/careers/page": "app/careers/page.js",
-  "/contact/page": "app/contact/page.js",
+  "/dashboard/account/page": "app/dashboard/account/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/faq/page": "app/faq/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/login/page": "app/login/page.js",
   "/page": "app/page.js",
-  "/privacy-policy/page": "app/privacy-policy/page.js",
-  "/terms-of-service/page": "app/terms-of-service/page.js"
+  "/signup/page": "app/signup/page.js"
 }

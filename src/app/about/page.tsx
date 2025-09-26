@@ -25,14 +25,16 @@ export default function AboutPage() {
             <Card className="p-8 md:p-12 bg-card/50">
                 <div className="grid md:grid-cols-3 gap-8 md:gap-12 items-center">
                     <div className="md:col-span-1">
-                        <Image 
-                            src="https://picsum.photos/seed/deb/600/600" 
-                            alt="Debabrata Behera"
-                            width={600}
-                            height={600}
-                            className="rounded-lg shadow-lg"
-                            data-ai-hint="portrait man"
-                        />
+                        
+<Image
+  src="/images/deb.jpg"
+  alt="Debabrata Behera"
+  width={600}
+  height={600}
+  className="rounded-lg shadow-lg"
+/>
+
+                      =
                     </div>
                     <div className="md:col-span-2">
                         <h2 className="text-3xl font-bold font-headline mb-4">Meet Our Founder</h2>

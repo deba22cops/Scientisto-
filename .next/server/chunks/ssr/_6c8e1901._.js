@@ -44,7 +44,7 @@ function ScientoLogo(props) {
                 fontWeight: "bold",
                 fill: "hsl(var(--primary))",
                 className: "font-headline",
-                children: "Genexto"
+                children: "Scientisto"
             }, void 0, false, {
                 fileName: "[project]/src/components/icons.tsx",
                 lineNumber: 12,

@@ -170,18 +170,6 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
 
       // First Page Header
       doc.setPage(1);
-
-      if (promptData?.logoDataUrl) {
-        const img = new Image();
-        img.src = promptData.logoDataUrl;
-        await new Promise(resolve => img.onload = resolve);
-        
-        const logoWidth = 40; 
-        const logoHeight = (img.height * logoWidth) / img.width;
-        const x_center = (pageWidth - logoWidth) / 2;
-        doc.addImage(img, 'PNG', x_center, y, logoWidth, logoHeight);
-        y += logoHeight + 10;
-      }
       
       doc.setFontSize(20);
       doc.setTextColor(128, 0, 128); // Purple color

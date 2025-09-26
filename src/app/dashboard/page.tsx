@@ -16,7 +16,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const onGenerate = async (data: Omit<GenerateDocumentFromPromptInput, 'logoDataUrl'> & { logo?: FileList }) => {
+  const onGenerate = async (data: GenerateDocumentFromPromptInput) => {
     if (!user) {
       toast({
         variant: "destructive",
@@ -30,30 +30,7 @@ export default function DashboardPage() {
     setGenerationResult(null);
     setCurrentPromptData(data);
     
-    const { logo, ...promptInput } = data;
-    let logoDataUrl: string | undefined = undefined;
-
-    if (logo && logo.length > 0) {
-      const file = logo[0];
-      if (file.type !== 'image/png') {
-        toast({
-          variant: "destructive",
-          title: "Invalid Logo Format",
-          description: "Please upload a logo in PNG format.",
-        });
-        setIsLoading(false);
-        return;
-      }
-      logoDataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target?.result as string);
-        reader.onerror = (e) => reject(e);
-        reader.readAsDataURL(file);
-      });
-    }
-
-
-    const result = await handleGeneration({ ...promptInput, userId: user.uid, logoDataUrl });
+    const result = await handleGeneration({ ...data, userId: user.uid });
 
     if (result.success && result.data) {
       setGenerationResult(result.data);

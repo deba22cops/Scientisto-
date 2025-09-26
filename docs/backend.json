@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -32,10 +33,6 @@
           "type": "string",
           "description": "Timestamp indicating the user's last login.",
           "format": "date-time"
-        },
-        "googleId": {
-          "type": "string",
-          "description": "The Google user ID, if the user signed up with Google."
         },
         "usageTokens": {
           "type": "number",
@@ -168,9 +165,7 @@
   },
   "auth": {
     "providers": [
-      "password",
-      "anonymous",
-      "google.com"
+      "password"
     ]
   },
   "firestore": {

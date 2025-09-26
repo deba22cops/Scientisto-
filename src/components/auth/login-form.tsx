@@ -16,12 +16,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { GoogleLogo } from "@/components/icons";
 import { useAuth } from "@/firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { FirebaseError } from "firebase/app";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -48,91 +47,74 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // This is a placeholder for email/password sign-in
-    console.log(values);
-    // In a real app, you'd call Firebase's signInWithEmailAndPassword
-    setTimeout(() => {
-        toast({
-            title: "Login Successful",
-            description: "Redirecting to your dashboard...",
-        });
-        router.push("/dashboard");
-        setIsLoading(false);
-    }, 1000);
-  }
-
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
     try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: "Login Successful",
-        description: "You're now signed in.",
+        description: "Redirecting to your dashboard...",
       });
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
+      let description = "An unexpected error occurred. Please try again.";
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+          case 'auth/invalid-credential':
+            description = "Invalid email or password. Please try again.";
+            break;
+          default:
+            description = "Failed to sign in. Please try again later.";
+            break;
+        }
+      }
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "Could not sign in with Google. Please try again.",
+        description,
       });
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="w-full space-y-6">
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-            {isLoading ? <Loader2 className="mr-2 animate-spin" /> : <GoogleLogo className="mr-2" />}
-            Sign in with Google
-        </Button>
-        <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                </span>
-            </div>
-        </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="name@example.com" {...field} disabled={isLoading} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-             {isLoading && <Loader2 className="mr-2 animate-spin" />}
-              Sign In with Email
-            </Button>
-          </form>
-        </Form>
+    <div className="w-full">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="name@example.com" {...field} disabled={isLoading} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 animate-spin" />}
+            Sign In
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 }

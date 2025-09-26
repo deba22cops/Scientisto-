@@ -52,48 +52,6 @@ export async function generateDocumentFromPrompt(
   return generateDocumentFromPromptFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateDocumentFromPromptPrompt',
-  input: {schema: GenerateDocumentFromPromptInputSchema},
-  output: {schema: GenerateDocumentFromPromptOutputSchema},
-  prompt: `You are an AI research assistant that generates documents from prompts.
-
-  Generate a document in the following format: {{{format}}}.
-
-  {{#if prdType}}
-    This is a {{{prdType}}} PRD.
-    {{#if (eval "prdType === 'Tech'") }}
-      When generating a Tech PRD, ensure the document is very lengthy, well-structured, and includes a detailed "Tech Stack" section.
-      The output should be clean text, without any markdown symbols like '#' or '*'. Use line breaks for structure.
-    {{/if}}
-  {{/if}}
-
-  Prompt: {{{prompt}}}
-
-  {{#if topicKeywords}}
-  Topic Keywords: {{{topicKeywords}}}
-  {{/if}}
-
-  Desired Depth: {{{desiredDepth}}}
-
-  {{#if targetAudience}}
-  Target Audience: {{{targetAudience}}}
-  {{/if}}
-
-  {{#if targetLength}}
-  Target Length: {{{targetLength}}}
-  {{/if}}
-
-  Tone and Style: {{{toneStyle}}}
-
-  References Style: {{{referencesStyle}}}
-
-  The document should be well-structured and easy to read.
-
-  Include a short, one-sentence summary of what you have generated to the 'progress' field in the output.
-  `,
-});
-
 const generateDocumentFromPromptFlow = ai.defineFlow(
   {
     name: 'generateDocumentFromPromptFlow',
@@ -101,7 +59,43 @@ const generateDocumentFromPromptFlow = ai.defineFlow(
     outputSchema: GenerateDocumentFromPromptOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    let promptText = `You are an AI research assistant that generates documents from prompts.
+
+    Generate a document in the following format: ${input.format}.`;
+
+    if (input.prdType) {
+      promptText += `\nThis is a ${input.prdType} PRD.`;
+      if (input.prdType === 'Tech') {
+        promptText += `\nWhen generating a Tech PRD, ensure the document is very lengthy, well-structured, and includes a detailed "Tech Stack" section.\nThe output should be clean text, without any markdown symbols like '#' or '*'. Use line breaks for structure.`;
+      }
+    }
+
+    promptText += `\n\nPrompt: ${input.prompt}`;
+
+    if (input.topicKeywords) {
+      promptText += `\nTopic Keywords: ${input.topicKeywords}`;
+    }
+
+    promptText += `\nDesired Depth: ${input.desiredDepth}`;
+
+    if (input.targetAudience) {
+      promptText += `\nTarget Audience: ${input.targetAudience}`;
+    }
+
+    if (input.targetLength) {
+      promptText += `\nTarget Length: ${input.targetLength}`;
+    }
+
+    promptText += `\nTone and Style: ${input.toneStyle}`;
+    promptText += `\nReferences Style: ${input.referencesStyle}`;
+    promptText += `\n\nThe document should be well-structured and easy to read.`;
+    promptText += `\n\nInclude a short, one-sentence summary of what you have generated to the 'progress' field in the output.`;
+
+
+    const {output} = await ai.generate({
+      prompt: promptText,
+      output: { schema: GenerateDocumentFromPromptOutputSchema },
+    });
     return output!;
   }
 );

@@ -14,16 +14,16 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileDown, Bot, FileType, FileX } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { GenerateDocumentFromPromptOutput } from "@/ai/flows/generate-document-from-prompt";
+import type { GenerateDocumentFromPromptInput, GenerateDocumentFromPromptOutput } from "@/ai/flows/generate-document-from-prompt";
 import { useToast } from "@/hooks/use-toast";
-import { Document, Packer, Paragraph, TextRun, Header, Footer, AlignmentType, ShadingType } from "docx";
+import { Document, Packer, Paragraph, TextRun, Header, Footer, AlignmentType, ImageRun } from "docx";
 import jsPDF from "jspdf";
 
 type DocumentPreviewProps = {
   result: GenerateDocumentFromPromptOutput | null;
   isLoading: boolean;
   onCancel: () => void;
-  prompt: string | undefined;
+  promptData: GenerateDocumentFromPromptInput | null;
 };
 
 const progressMessages = [
@@ -96,14 +96,14 @@ function LoadingSkeleton() {
     )
 }
 
-export function DocumentPreview({ result, isLoading, onCancel, prompt }: DocumentPreviewProps) {
+export function DocumentPreview({ result, isLoading, onCancel, promptData }: DocumentPreviewProps) {
   const { toast } = useToast();
 
   const getFileName = () => {
-    return prompt ? prompt.substring(0, 30).replace(/[^a-zA-Z0-9]/g, '_') : 'document';
+    return promptData?.prompt ? promptData.prompt.substring(0, 30).replace(/[^a-zA-Z0-9]/g, '_') : 'document';
   }
 
-  const handleExport = (format: 'DOCX' | 'PDF') => {
+  const handleExport = async (format: 'DOCX' | 'PDF') => {
     if (!result || !result.document) return;
 
     const fileName = getFileName();
@@ -162,22 +162,39 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
       const pageHeight = doc.internal.pageSize.height;
       const pageWidth = doc.internal.pageSize.width;
       const margin = 15;
-      let y = margin + 10;
+      let y = margin;
       
-      const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
+      const totalPages = Math.ceil(doc.getTextDimensions(result.document, {
+          maxWidth: pageWidth - margin * 2
+      }).h / (pageHeight - margin * 2)) +1;
+
+      // First Page Header
+      doc.setPage(1);
+
+      if (promptData?.logoDataUrl) {
+        const img = new Image();
+        img.src = promptData.logoDataUrl;
+        await new Promise(resolve => img.onload = resolve);
+        
+        const logoWidth = 40; 
+        const logoHeight = (img.height * logoWidth) / img.width;
+        const x_center = (pageWidth - logoWidth) / 2;
+        doc.addImage(img, 'PNG', x_center, y, logoWidth, logoHeight);
+        y += logoHeight + 10;
+      }
       
-      // Add header to the first page
-      doc.setFontSize(14); // Increased font size
+      doc.setFontSize(20);
       doc.setTextColor(128, 0, 128); // Purple color
       doc.setFont("Times-Roman", "bold");
-      doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
+      doc.text("Scientisto", pageWidth - margin, y, { align: "right" });
+      y += 10; 
       
-      // Reset text color and font for content
+      
       doc.setTextColor(0, 0, 0); 
       doc.setFont("Times-Roman", "normal");
       doc.setFontSize(12);
 
-      y += 10; // Add some space after the header
+      const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
 
       lines.forEach((line: string, index: number) => {
           const isHeading = line.length < 100 && !line.endsWith('.') && line.trim().length > 0;
@@ -195,8 +212,7 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
       });
 
       // Add footer to the last page
-      const totalPages = doc.internal.pages.length;
-      doc.setPage(totalPages);
+      doc.setPage(doc.internal.pages.length);
       doc.setFontSize(10);
       doc.setTextColor(128, 0, 128); // Purple color
       doc.setFont("Times-Roman", "normal");
@@ -239,5 +255,3 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
     </Card>
   );
 }
-
-    

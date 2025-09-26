@@ -51,6 +51,7 @@ const formSchema = z.object({
   }),
   format: z.enum(['PRD', 'Research paper', 'Essay']),
   prdType: z.enum(['Tech', 'Non-Tech']).optional(),
+  logo: z.any().optional(),
   topicKeywords: z.string().optional(),
   desiredDepth: z.enum(['Quick', 'Standard', 'Deep']),
   targetAudience: z.string().optional(),
@@ -60,7 +61,7 @@ const formSchema = z.object({
 });
 
 type PromptFormProps = {
-  onGenerate: (data: GenerateDocumentFromPromptInput) => void;
+  onGenerate: (data: z.infer<typeof formSchema>) => void;
   isLoading: boolean;
 };
 
@@ -172,6 +173,30 @@ export function PromptForm({ onGenerate, isLoading }: PromptFormProps) {
                   )}
                 />
               </div>
+
+               <FormField
+                  control={form.control}
+                  name="logo"
+                  render={({ field: { onChange, value, ...rest } }) => (
+                    <FormItem>
+                      <FormLabel>Upload Logo (PNG only)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="file" 
+                          accept=".png" 
+                          onChange={(e) => {
+                            onChange(e.target.files)
+                          }}
+                          {...rest} 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Add your brand's logo to the exported PDF.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               
               {watchFormat === 'PRD' && (
                 <FormField

@@ -12,11 +12,11 @@ import { useUser } from "@/firebase";
 export default function DashboardPage() {
   const { user } = useUser();
   const [generationResult, setGenerationResult] = useState<GenerateDocumentFromPromptOutput | null>(null);
-  const [currentPrompt, setCurrentPrompt] = useState<GenerateDocumentFromPromptInput | null>(null);
+  const [currentPromptData, setCurrentPromptData] = useState<GenerateDocumentFromPromptInput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const onGenerate = async (data: GenerateDocumentFromPromptInput) => {
+  const onGenerate = async (data: Omit<GenerateDocumentFromPromptInput, 'logoDataUrl'> & { logo?: FileList }) => {
     if (!user) {
       toast({
         variant: "destructive",
@@ -28,9 +28,32 @@ export default function DashboardPage() {
     
     setIsLoading(true);
     setGenerationResult(null);
-    setCurrentPrompt(data);
+    setCurrentPromptData(data);
+    
+    const { logo, ...promptInput } = data;
+    let logoDataUrl: string | undefined = undefined;
 
-    const result = await handleGeneration({ ...data, userId: user.uid });
+    if (logo && logo.length > 0) {
+      const file = logo[0];
+      if (file.type !== 'image/png') {
+        toast({
+          variant: "destructive",
+          title: "Invalid Logo Format",
+          description: "Please upload a logo in PNG format.",
+        });
+        setIsLoading(false);
+        return;
+      }
+      logoDataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(file);
+      });
+    }
+
+
+    const result = await handleGeneration({ ...promptInput, userId: user.uid, logoDataUrl });
 
     if (result.success && result.data) {
       setGenerationResult(result.data);
@@ -53,7 +76,7 @@ export default function DashboardPage() {
     // This is a client-side cancellation. A more robust solution would involve AbortController.
     setIsLoading(false);
     setGenerationResult(null);
-    setCurrentPrompt(null);
+    setCurrentPromptData(null);
     toast({
       title: "Generation Cancelled",
       description: "The document generation process has been stopped.",
@@ -66,7 +89,12 @@ export default function DashboardPage() {
         <PromptForm onGenerate={onGenerate} isLoading={isLoading} />
       </div>
       <div className="h-full">
-        <DocumentPreview result={generationResult} isLoading={isLoading} onCancel={onCancel} prompt={currentPrompt?.prompt} />
+        <DocumentPreview 
+          result={generationResult} 
+          isLoading={isLoading} 
+          onCancel={onCancel} 
+          promptData={currentPromptData}
+        />
       </div>
     </div>
   );

@@ -20,6 +20,7 @@ const GenerateDocumentFromPromptInputSchema = z.object({
     .enum(['Tech', 'Non-Tech'])
     .optional()
     .describe('The type of PRD to generate, if the format is PRD.'),
+  logoDataUrl: z.string().optional().describe('A base64 encoded data URL of the user\'s logo.'),
   topicKeywords: z.string().optional().describe('Optional topic keywords.'),
   desiredDepth: z
     .enum(['Quick', 'Standard', 'Deep'])

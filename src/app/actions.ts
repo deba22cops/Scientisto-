@@ -6,8 +6,8 @@ import {
   type GenerateDocumentFromPromptInput,
   type GenerateDocumentFromPromptOutput,
 } from '@/ai/flows/generate-document-from-prompt';
-import { getAdminApp } from '@/firebase/server';
-import { getFirestore } from 'firebase-admin/firestore';
+import { initializeFirebase } from '@/firebase';
+import { collection, doc, setDoc } from 'firebase/firestore';
 
 export async function handleGeneration(
   input: GenerateDocumentFromPromptInput & { userId: string }
@@ -24,19 +24,23 @@ export async function handleGeneration(
 
     // Save prompt and generated document to history on successful generation
     try {
-      const adminApp = getAdminApp();
-      const firestore = getFirestore(adminApp);
-      const userRef = firestore.collection('users').doc(userId);
-      
-      const promptRef = userRef.collection('prompts').doc();
-      await promptRef.set({
+      // Use the client SDK for Firestore operations in Server Actions
+      const { firestore } = initializeFirebase(); 
+      const userPromptsCol = collection(firestore, 'users', userId, 'prompts');
+      const promptRef = doc(userPromptsCol);
+
+      // Use non-blocking setDoc
+      setDoc(promptRef, {
         ...promptInput,
         createdAt: new Date().toISOString(),
         id: promptRef.id,
       });
 
-      const docRef = userRef.collection('generatedDocuments').doc();
-      await docRef.set({
+      const userDocsCol = collection(firestore, 'users', userId, 'generatedDocuments');
+      const docRef = doc(userDocsCol);
+      
+      // Use non-blocking setDoc
+      setDoc(docRef, {
         id: docRef.id,
         promptId: promptRef.id,
         userId: userId,
@@ -48,10 +52,12 @@ export async function handleGeneration(
       
       return { success: true, data: { ...result, documentId: docRef.id } };
 
-    } catch (dbError) {
+    } catch (dbError: any) {
       console.error('Failed to save document to history:', dbError);
       // We don't fail the whole operation if history saving fails, but we could add more robust logging.
-       return { success: true, data: { ...result, documentId: '' } }; // Proceed without a doc id
+      const errorMessage = dbError.message || 'Could not save to history.';
+      // Still return success, but log the specific DB error.
+      return { success: true, data: { ...result, documentId: '' } }; 
     }
 
   } catch (error) {

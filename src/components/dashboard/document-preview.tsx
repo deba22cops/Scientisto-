@@ -171,7 +171,7 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
       // First Page Header
       doc.setPage(1);
       
-      doc.setFontSize(20);
+      doc.setFontSize(24);
       doc.setTextColor(128, 0, 128); // Purple color
       doc.setFont("Times-Roman", "bold");
       doc.text("Scientisto", pageWidth - margin, y, { align: "right" });
@@ -200,11 +200,13 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
       });
 
       // Add footer to the last page
-      doc.setPage(doc.internal.pages.length);
-      doc.setFontSize(10);
-      doc.setTextColor(128, 0, 128); // Purple color
-      doc.setFont("Times-Roman", "normal");
-      doc.text("Researched with Scientisto AI", pageWidth / 2, pageHeight - margin + 10, { align: "center" });
+      for (let i = 1; i <= doc.internal.pages.length; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.setTextColor(128, 0, 128);
+        doc.setFont("Times-Roman", "normal");
+        doc.text(`Researched with Scientisto AI - Page ${i} of ${totalPages - 1}`, pageWidth / 2, pageHeight - margin + 10, { align: "center" });
+      }
 
       doc.save(`${fileName}.pdf`);
     }
@@ -225,12 +227,12 @@ export function DocumentPreview({ result, isLoading, onCancel, promptData }: Doc
           {result && (
             <div className="p-4 sm:p-6" id="document-content">
                 <p className="text-xs text-muted-foreground mb-4">{result.progress}</p>
-                {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm max-w-none whitespace-pre-wrap">{result.document}</div>}
+                {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm lg:prose-base max-w-none whitespace-pre-wrap">{result.document}</div>}
             </div>
           )}
         </ScrollArea>
       </CardContent>
-      <CardFooter className="justify-end gap-2">
+      <CardFooter className="flex-wrap justify-end gap-2">
         <Button variant="outline" disabled={!result || isLoading} onClick={() => handleExport('DOCX')}>
           <FileDown className="mr-2 h-4 w-4" />
           Export as DOCX

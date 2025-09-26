@@ -96,8 +96,8 @@ export function PromptForm({ onGenerate, isLoading }: PromptFormProps) {
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
-          <ScrollArea className="flex-1">
-            <CardContent className="space-y-6">
+          <ScrollArea className="flex-1 -mt-6">
+            <CardContent className="space-y-6 pt-6">
               <FormField
                 control={form.control}
                 name="prompt"

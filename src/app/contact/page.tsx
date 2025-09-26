@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/landing/header";
 import { Footer } from "@/components/landing/footer";
 import { ParticleBackground } from "@/components/landing/particle-background";
@@ -26,7 +27,7 @@ export default function ContactPage() {
         </section>
 
         <section className="container mx-auto pb-16 sm:pb-24">
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-12">
             <div className="space-y-8">
                 <div className="flex items-start gap-4">
                     <div className="bg-primary/10 p-3 rounded-full">

@@ -1,0 +1,121 @@
+/**
+ * @fileoverview Firestore Security Rules for the Genexto application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model.  Each user has full control over their own data, and no access to other users' data.  Listing of other users is disallowed.
+ *
+ * Data Structure:
+ * All data is nested under /users/{userId}, ensuring clear ownership.  Prompts and GeneratedDocuments are stored as subcollections.
+ *
+ * Key Security Decisions:
+ * - User listing is disallowed.
+ * - Only authenticated users can access the application.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Protects the root of the database. No direct reads or writes are allowed at the root.
+     * @path /
+     * @allow (get) - N/A, this rule prevents all access.
+     * @deny (get) - Any get request.
+     * @allow (list) - N/A, this rule prevents all access.
+     * @deny (list) - Any list request.
+     * @allow (create) - N/A, this rule prevents all access.
+     * @deny (create) - Any create request.
+     * @allow (update) - N/A, this rule prevents all access.
+     * @deny (update) - Any update request.
+     * @allow (delete) - N/A, this rule prevents all access.
+     * @deny (delete) - Any delete request.
+     * @principle Prevents direct access to the database root.
+     */
+    match /{document=**} {
+        allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Manages access to user profiles. Only the authenticated user can read or write their own profile.
+     * @path /users/{userId}
+     * @allow (get) User A (auth UID: A) can get /users/A.
+     * @deny (get) User A (auth UID: A) cannot get /users/B.
+     * @allow (list) Listing is disallowed.
+     * @deny (list) Any list request.
+     * @allow (create) User A (auth UID: A) can create /users/A.
+     * @deny (create) User A (auth UID: A) cannot create /users/B.
+     * @allow (update) User A (auth UID: A) can update /users/A.
+     * @deny (update) User A (auth UID: A) cannot update /users/B.
+     * @allow (delete) User A (auth UID: A) can delete /users/A.
+     * @deny (delete) User A (auth UID: A) cannot delete /users/B.
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to user-created prompts. Only the authenticated user can read or write their own prompts.
+     * @path /users/{userId}/prompts/{promptId}
+     * @allow (get) User A (auth UID: A) can get /users/A/prompts/prompt1.
+     * @deny (get) User A (auth UID: A) cannot get /users/B/prompts/prompt1.
+     * @allow (list) User A (auth UID: A) can list prompts under /users/A.
+     * @deny (list) User A (auth UID: A) cannot list prompts under /users/B.
+     * @allow (create) User A (auth UID: A) can create /users/A/prompts/prompt1.
+     * @deny (create) User A (auth UID: A) cannot create /users/B/prompts/prompt1.
+     * @allow (update) User A (auth UID: A) can update /users/A/prompts/prompt1.
+     * @deny (update) User A (auth UID: A) cannot update /users/B/prompts/prompt1.
+     * @allow (delete) User A (auth UID: A) can delete /users/A/prompts/prompt1.
+     * @deny (delete) User A (auth UID: A) cannot delete /users/B/prompts/prompt1.
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId}/prompts/{promptId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) && request.resource.data.userId == userId && request.resource.data.id == promptId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId && request.resource.data.id == promptId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to generated documents. Only the authenticated user can read or write their own documents.
+     * @path /users/{userId}/generatedDocuments/{documentId}
+     * @allow (get) User A (auth UID: A) can get /users/A/generatedDocuments/doc1.
+     * @deny (get) User A (auth UID: A) cannot get /users/B/generatedDocuments/doc1.
+     * @allow (list) User A (auth UID: A) can list documents under /users/A.
+     * @deny (list) User A (auth UID: A) cannot list documents under /users/B.
+     * @allow (create) User A (auth UID: A) can create /users/A/generatedDocuments/doc1.
+     * @deny (create) User A (auth UID: A) cannot create /users/B/generatedDocuments/doc1.
+     * @allow (update) User A (auth UID: A) can update /users/A/generatedDocuments/doc1.
+     * @deny (update) User A (auth UID: A) cannot update /users/B/generatedDocuments/doc1.
+     * @allow (delete) User A (auth UID: A) can delete /users/A/generatedDocuments/doc1.
+     * @deny (delete) User A (auth UID: A) cannot delete /users/B/generatedDocuments/doc1.
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId}/generatedDocuments/{documentId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) && request.resource.data.userId == userId && request.resource.data.id == documentId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId && request.resource.data.id == documentId;
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

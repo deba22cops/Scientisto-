@@ -1,0 +1,236 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the Genexto application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The first name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The last name of the user."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user account was created.",
+          "format": "date-time"
+        },
+        "lastLogin": {
+          "type": "string",
+          "description": "Timestamp indicating the user's last login.",
+          "format": "date-time"
+        },
+        "googleId": {
+          "type": "string",
+          "description": "The Google user ID, if the user signed up with Google."
+        },
+        "usageTokens": {
+          "type": "number",
+          "description": "Number of tokens consumed for document generation and research."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "createdAt"
+      ]
+    },
+    "Prompt": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Prompt",
+      "type": "object",
+      "description": "Represents a user-submitted prompt and its associated settings.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the prompt."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Prompt)"
+        },
+        "promptText": {
+          "type": "string",
+          "description": "The actual text of the prompt submitted by the user."
+        },
+        "topicKeywords": {
+          "type": "string",
+          "description": "Optional keywords associated with the prompt."
+        },
+        "desiredDepth": {
+          "type": "string",
+          "description": "The desired depth of research (e.g., Quick, Standard, Deep)."
+        },
+        "targetAudience": {
+          "type": "string",
+          "description": "The intended target audience for the generated content."
+        },
+        "targetLength": {
+          "type": "number",
+          "description": "The desired length of the generated document (e.g., word count)."
+        },
+        "format": {
+          "type": "string",
+          "description": "The selected document format (e.g., PRD, Research Paper, Essay)."
+        },
+        "toneStyle": {
+          "type": "string",
+          "description": "The tone and style of the generated document (e.g., Formal, Conversational, Academic)."
+        },
+        "referenceStyle": {
+          "type": "string",
+          "description": "The citation/reference style to use (e.g., No links, With links)."
+        },
+        "saved": {
+          "type": "boolean",
+          "description": "Indicates whether the prompt is saved as a template."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the prompt was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "promptText",
+        "format",
+        "createdAt"
+      ]
+    },
+    "GeneratedDocument": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GeneratedDocument",
+      "type": "object",
+      "description": "Represents a generated document based on a user prompt.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the generated document."
+        },
+        "promptId": {
+          "type": "string",
+          "description": "Reference to Prompt. (Relationship: Prompt 1:1 GeneratedDocument)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N GeneratedDocument)"
+        },
+        "documentName": {
+          "type": "string",
+          "description": "Name of the generated document (e.g., filename)."
+        },
+        "documentContent": {
+          "type": "string",
+          "description": "The actual content of the generated document (rich text)."
+        },
+        "format": {
+          "type": "string",
+          "description": "The format of the generated document (e.g., DOCX, PDF)."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp indicating when the document was generated.",
+          "format": "date-time"
+        },
+        "wordCount": {
+          "type": "number",
+          "description": "The number of words in the generated document."
+        },
+        "checksum": {
+          "type": "string",
+          "description": "A checksum or hash of the document content for integrity verification."
+        }
+      },
+      "required": [
+        "id",
+        "promptId",
+        "userId",
+        "documentName",
+        "format",
+        "timestamp"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Access is restricted to the user themselves.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/prompts/{promptId}",
+        "definition": {
+          "entityName": "Prompt",
+          "schema": {
+            "$ref": "#/backend/entities/Prompt"
+          },
+          "description": "Stores prompts created by users. Access is restricted to the user who created the prompt.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "promptId",
+              "description": "The unique identifier of the prompt."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/generatedDocuments/{documentId}",
+        "definition": {
+          "entityName": "GeneratedDocument",
+          "schema": {
+            "$ref": "#/backend/entities/GeneratedDocument"
+          },
+          "description": "Stores generated documents. Access is restricted to the user who owns the document.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "documentId",
+              "description": "The unique identifier of the generated document."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the Genexto application. We leverage path-based ownership for user-specific data and segregate data based on access requirements. This approach simplifies security rules and enhances maintainability.\n\n*   `/users/{userId}`: Stores user profiles. This is a standard path-based ownership pattern, allowing simple security rules based on `request.auth.uid == userId`.\n*   `/users/{userId}/prompts/{promptId}`: Stores prompts created by users. This structure maintains the 1:N relationship between users and prompts and simplifies security rules based on the path.\n*   `/users/{userId}/generatedDocuments/{documentId}`: Stores generated documents. Similar to prompts, this maintains the 1:N relationship and path-based ownership.\n\nAuthorization Independence is achieved by avoiding `get()` calls in security rules. Each document's access control is determined solely by its location within the path hierarchy. For example, access to `/users/{userId}/prompts/{promptId}` is governed by whether the `request.auth.uid` matches the `{userId}` in the path. There is no reliance on data from other documents to determine authorization.\n\nQAPs (Rules Are Not Filters) are supported through structural segregation. List operations are inherently secure because each collection only contains data that the user is authorized to access based on the path. For example, listing documents in `/users/{userId}/generatedDocuments` only returns documents owned by the user identified by `{userId}`."
+  }
+}

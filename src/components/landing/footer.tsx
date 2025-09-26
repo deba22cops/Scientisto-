@@ -9,7 +9,7 @@ export function Footer() {
           <ScientoLogo />
         </div>
         <p className="text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Sciento. All rights reserved.
+          &copy; {new Date().getFullYear()} Scientisto. All rights reserved.
         </p>
         <div className="flex gap-4">
           <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">

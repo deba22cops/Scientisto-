@@ -13,7 +13,7 @@ export async function handleGeneration(
   input: GenerateDocumentFromPromptInput & { userId: string }
 ): Promise<{ success: boolean; data?: GenerateDocumentFromPromptOutput & { documentId: string }; error?: string }> {
   const { userId, ...promptInput } = input;
-  if (!user) {
+  if (!userId) {
     return { success: false, error: 'User is not authenticated.' };
   }
 

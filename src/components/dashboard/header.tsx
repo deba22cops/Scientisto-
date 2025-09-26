@@ -10,8 +10,6 @@ import {
   PanelLeft,
   Home,
   History,
-  Star,
-  FileText,
   Settings,
 } from "lucide-react";
 import { UserNav } from "@/components/dashboard/user-nav";
@@ -20,8 +18,6 @@ import { ScientoLogo } from "@/components/icons";
 const mobileNavItems = [
   { href: "/dashboard", icon: Home, label: "New Research" },
   { href: "/dashboard/history", icon: History, label: "History" },
-  { href: "/dashboard/saved", icon: Star, label: "Saved" },
-  { href: "/dashboard/templates", icon: FileText, label: "Templates" },
   { href: "/dashboard/account", icon: Settings, label: "Account" },
 ];
 

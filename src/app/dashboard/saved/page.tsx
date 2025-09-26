@@ -1,34 +1,60 @@
+import Link from "next/link";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import {
+  PanelLeft,
+  Home,
+  History,
+  Settings,
+} from "lucide-react";
+import { UserNav } from "@/components/dashboard/user-nav";
+import { ScientoLogo } from "@/components/icons";
 
-'use client';
+const mobileNavItems = [
+  { href: "/dashboard", icon: Home, label: "New Research" },
+  { href: "/dashboard/history", icon: History, label: "History" },
+  { href: "/dashboard/account", icon: Settings, label: "Account" },
+];
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Star } from "lucide-react";
-
-export default function SavedPromptsPage() {
+export function DashboardHeader() {
   return (
-    <div className="space-y-6">
-       <div>
-        <h1 className="text-2xl font-bold tracking-tight font-headline">Saved Prompts</h1>
-        <p className="text-muted-foreground">
-          Your favorite prompts are saved here for quick access. (Coming Soon)
-        </p>
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button size="icon" variant="outline" className="sm:hidden">
+            <PanelLeft className="h-5 w-5" />
+            <span className="sr-only">Toggle Menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="sm:max-w-xs">
+          <nav className="grid gap-6 text-lg font-medium">
+            <Link
+              href="/dashboard"
+              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+            >
+              <ScientoLogo className="h-5 w-5 transition-all group-hover:scale-110" />
+              <span className="sr-only">Scientisto</span>
+            </Link>
+            {mobileNavItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                <item.icon className="h-5 w-5" />
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </SheetContent>
+      </Sheet>
+      <div className="ml-auto flex items-center gap-2">
+        <UserNav />
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Saved</CardTitle>
-          <CardDescription>This feature is currently in development.</CardDescription>
-        </CardHeader>
-        <CardContent>
-            <div className="text-center py-12">
-                <Star className="mx-auto h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 text-lg font-medium">Feature Coming Soon</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    You'll be able to save and manage your favorite prompts from this page.
-                </p>
-            </div>
-        </CardContent>
-      </Card>
-    </div>
+    </header>
   );
 }

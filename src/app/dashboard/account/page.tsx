@@ -204,20 +204,6 @@ export default function AccountPage() {
             <Button onClick={handlePasswordUpdate} disabled={isUpdating}>{isUpdating ? 'Updating...' : 'Update Password'}</Button>
         </CardContent>
       </Card>
-      
-       <Card>
-        <CardHeader>
-            <CardTitle>Phone Number</CardTitle>
-            <CardDescription>Add a phone number for account recovery (Coming Soon).</CardDescription>
-        </CardHeader>
-        <CardContent className='opacity-50'>
-            <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" placeholder="+1 (555) 000-0000" disabled />
-            </div>
-            <Button disabled className="mt-4">Add Phone Number</Button>
-        </CardContent>
-      </Card>
 
     </div>
   );

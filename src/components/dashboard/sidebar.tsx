@@ -12,8 +12,6 @@ import {
 import {
   Home,
   History,
-  Star,
-  FileText,
   Settings,
   Bot,
 } from "lucide-react";
@@ -22,8 +20,6 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/dashboard", icon: Home, label: "New Research" },
   { href: "/dashboard/history", icon: History, label: "History" },
-  { href: "/dashboard/saved", icon: Star, label: "Saved" },
-  { href: "/dashboard/templates", icon: FileText, label: "Templates" },
 ];
 
 const bottomNavItems = [

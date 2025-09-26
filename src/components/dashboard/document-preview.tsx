@@ -167,7 +167,7 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
       const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
       
       // Add header to the first page
-      doc.setFontSize(10);
+      doc.setFontSize(14); // Increased font size
       doc.setTextColor(128, 0, 128); // Purple color
       doc.setFont("Times-Roman", "bold");
       doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
@@ -177,7 +177,9 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
       doc.setFont("Times-Roman", "normal");
       doc.setFontSize(12);
 
-      lines.forEach((line: string) => {
+      y += 10; // Add some space after the header
+
+      lines.forEach((line: string, index: number) => {
           const isHeading = line.length < 100 && !line.endsWith('.') && line.trim().length > 0;
           
           if (y + 10 > pageHeight - margin) {

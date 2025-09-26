@@ -12,6 +12,13 @@ export function HeroAnimation() {
           autoplay
         />
         </div>
+        <div className='absolute -top-10 -right-10 w-64 h-64 animate-float'>
+          <DotLottieReact
+            src="https://lottie.host/6b961c26-7004-4d33-8514-f27a6cb3bbc9/NutzC0pZjD.lottie"
+            loop
+            autoplay
+          />
+        </div>
     </div>
   );
 }

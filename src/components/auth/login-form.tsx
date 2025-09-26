@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Chrome } from "lucide-react";
+import { GoogleLogo } from "@/components/icons";
 import { useAuth } from "@/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
@@ -113,7 +113,7 @@ export function LoginForm() {
         </Form>
         <Separator className="my-6" />
         <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
-            <Chrome className="mr-2 h-4 w-4" />
+            <GoogleLogo className="mr-2 h-4 w-4" />
             Sign in with Google
         </Button>
         <p className="mt-6 text-center text-sm text-muted-foreground">

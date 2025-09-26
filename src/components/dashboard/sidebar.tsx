@@ -16,7 +16,7 @@ import {
   Settings,
   Bot,
 } from "lucide-react";
-import { GenextoLogo } from "@/components/icons";
+import { ScientoLogo } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -42,7 +42,7 @@ export function DashboardSidebar() {
             className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
           >
             <Bot className="h-4 w-4 transition-all group-hover:scale-110" />
-            <span className="sr-only">Genexto</span>
+            <span className="sr-only">Sciento</span>
           </Link>
           {navItems.map((item) => (
             <Tooltip key={item.label}>

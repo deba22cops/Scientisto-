@@ -14,7 +14,7 @@ import {
   Settings,
 } from "lucide-react";
 import { UserNav } from "@/components/dashboard/user-nav";
-import { GenextoLogo } from "@/components/icons";
+import { ScientoLogo } from "@/components/icons";
 
 const mobileNavItems = [
   { href: "/dashboard", icon: Home, label: "New Research" },
@@ -40,8 +40,8 @@ export function DashboardHeader() {
               href="/dashboard"
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
-              <GenextoLogo className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">Genexto</span>
+              <ScientoLogo className="h-5 w-5 transition-all group-hover:scale-110" />
+              <span className="sr-only">Sciento</span>
             </Link>
             {mobileNavItems.map((item) => (
               <Link

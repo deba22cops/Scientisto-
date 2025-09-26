@@ -12,7 +12,7 @@ export function Hero() {
   return (
     <section className="container mx-auto text-center py-16 sm:py-24">
       <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-headline tracking-tighter">
-        Genexto — Deep research, instant deliverables.
+        Sciento — Deep research, instant deliverables.
       </h1>
       <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
         Type a simple prompt. Get a full PRD, research paper, or essay —
@@ -20,7 +20,7 @@ export function Hero() {
       </p>
       <div className="mt-8 flex justify-center gap-4">
         <Button size="lg" asChild>
-          <Link href="/signup">Try Genexto (Sign up free)</Link>
+          <Link href="/signup">Try Sciento (Sign up free)</Link>
         </Button>
         <SampleOutputsModal />
       </div>

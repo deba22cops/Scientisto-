@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 
-export function GenextoLogo(props: SVGProps<SVGSVGElement>) {
+export function ScientoLogo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +18,7 @@ export function GenextoLogo(props: SVGProps<SVGSVGElement>) {
         fill="hsl(var(--primary))"
         className="font-headline"
       >
-        Genexto
+        Sciento
       </text>
     </svg>
   );

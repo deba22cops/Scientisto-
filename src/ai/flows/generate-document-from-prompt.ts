@@ -62,10 +62,10 @@ const prompt = ai.definePrompt({
 
   {{#if prdType}}
   This is a {{{prdType}}} PRD.
-  {{#if (eq prdType "Tech")}}
+    {{#if (eq prdType "Tech")}}
   When generating a Tech PRD, ensure the document is very lengthy, well-structured, and includes a detailed "Tech Stack" section.
   The output should be clean text, without any markdown symbols like '#' or '*'. Use line breaks for structure.
-  {{/if}}
+    {{/if}}
   {{/if}}
 
   Prompt: {{{prompt}}}

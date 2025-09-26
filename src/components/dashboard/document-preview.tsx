@@ -17,7 +17,6 @@ import type { GenerateDocumentFromPromptOutput } from "@/ai/flows/generate-docum
 import { useToast } from "@/hooks/use-toast";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import jsPDF from "jspdf";
-import htmlToPdfmake from "html-to-pdfmake";
 
 type DocumentPreviewProps = {
   result: GenerateDocumentFromPromptOutput | null;
@@ -128,25 +127,12 @@ export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreview
       });
     } else if (format === 'PDF') {
       const doc = new jsPDF();
-      const pdfContent = htmlToPdfmake(result.document.replace(/\n/g, '<br/>'));
       
-      const documentDefinition = {
-        content: pdfContent
-      };
-      
-      // Since html-to-pdfmake doesn't integrate directly with jspdf in the way we want,
-      // we'll use jspdf's html method for simplicity, as it's more direct for this case.
-      // NOTE: This will not be perfect and might lose some styling.
-      // For a more robust solution, pdfmake itself would be used.
-      doc.html(result.document.replace(/\n/g, '<br/>'), {
-        callback: function(doc) {
-          doc.save("document.pdf");
-        },
-        x: 10,
-        y: 10,
-        width: 180,
-        windowWidth: 650
-      });
+      // The `html-to-pdfmake` and direct `doc.html` methods were unreliable.
+      // A more robust approach is to use jspdf's built-in text method, handling line breaks manually.
+      const lines = doc.splitTextToSize(result.document, 180); // 180mm width for A4 page with margins
+      doc.text(lines, 15, 15);
+      doc.save("document.pdf");
     }
   };
 
@@ -165,7 +151,7 @@ export function DocumentPreview({ result, isLoading, onCancel }: DocumentPreview
           {result && (
             <div className="p-4 sm:p-6" id="document-content">
                 <p className="text-xs text-muted-foreground mb-4">{result.progress}</p>
-                {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm max-w-none whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: result.document || '' }} />}
+                {isLoading ? <LoadingSkeleton/> : <div className="prose prose-sm max-w-none whitespace-pre-wrap">{result.document}</div>}
             </div>
           )}
         </ScrollArea>

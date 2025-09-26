@@ -4,16 +4,16 @@ export function ScientoLogo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 165 28"
-      width="165"
-      height="28"
+      viewBox="0 0 200 35"
+      width="200"
+      height="35"
       {...props}
     >
       <text
         x="0"
-        y="20"
+        y="28"
         fontFamily="var(--font-space-grotesk), sans-serif"
-        fontSize="24"
+        fontSize="30"
         fontWeight="bold"
         fill="hsl(var(--primary))"
         className="font-headline"
@@ -21,10 +21,10 @@ export function ScientoLogo(props: SVGProps<SVGSVGElement>) {
         Scientisto
       </text>
       <text
-        x="125"
-        y="14"
+        x="155"
+        y="20"
         fontFamily="var(--font-space-grotesk), sans-serif"
-        fontSize="10"
+        fontSize="14"
         fontWeight="bold"
         fill="hsl(var(--muted-foreground))"
         className="font-headline"

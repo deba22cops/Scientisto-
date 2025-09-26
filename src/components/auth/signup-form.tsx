@@ -22,6 +22,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { FirebaseError } from "firebase/app";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -32,6 +33,9 @@ const formSchema = z.object({
   }),
   password: z.string().min(8, {
     message: "Password must be at least 8 characters.",
+  }),
+  terms: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms and conditions.",
   }),
 });
 
@@ -47,6 +51,7 @@ export function SignUpForm() {
       name: "",
       email: "",
       password: "",
+      terms: false,
     },
   });
 
@@ -55,7 +60,6 @@ export function SignUpForm() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       
-      // Update the user's profile with their name
       if (userCredential.user) {
         await updateProfile(userCredential.user, {
           displayName: values.name,
@@ -129,7 +133,42 @@ export function SignUpForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <FormField
+            control={form.control}
+            name="terms"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 border">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>
+                     By clicking continue, you agree to our{" "}
+                    <Link
+                        href="/terms-of-service"
+                        className="underline underline-offset-4 hover:text-primary"
+                    >
+                        Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                        href="/privacy-policy"
+                        className="underline underline-offset-4 hover:text-primary"
+                    >
+                        Privacy Policy
+                    </Link>
+                    .
+                  </FormLabel>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full" disabled={isLoading || !form.formState.isValid}>
             {isLoading && <Loader2 className="mr-2 animate-spin" />}
             Create Account
           </Button>

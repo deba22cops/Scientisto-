@@ -123,7 +123,7 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
                   children: [
                     new TextRun({
                       text: "Scientisto",
-                      color: "2E64FE",
+                      color: "800080", // Purple color
                       font: "Times New Roman",
                       bold: true,
                     })
@@ -166,33 +166,22 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
       
       const lines = doc.splitTextToSize(result.document, doc.internal.pageSize.width - margin * 2);
       
-      // Add watermark/header to each page
-      const addHeaderAndFooter = (pageNum: number) => {
-        // Header
-        doc.setFontSize(10);
-        doc.setTextColor(46, 100, 254); // Blue color
-        doc.setFont("Times-Roman", "bold");
-        doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
-        
-        // Footer
-        doc.setTextColor(128, 0, 128); // Purple color
-        doc.setFont("Times-Roman", "normal");
-        doc.text("made with Scientisto AI", pageWidth / 2, pageHeight - margin + 10, { align: "center" });
-
-        // Reset text color and font
-        doc.setTextColor(0, 0, 0); 
-        doc.setFont("Times-Roman", "normal");
-        doc.setFontSize(12);
-      }
-
-      addHeaderAndFooter(1);
+      // Add header to the first page
+      doc.setFontSize(10);
+      doc.setTextColor(128, 0, 128); // Purple color
+      doc.setFont("Times-Roman", "bold");
+      doc.text("Scientisto", pageWidth - margin, margin, { align: "right" });
+      
+      // Reset text color and font for content
+      doc.setTextColor(0, 0, 0); 
+      doc.setFont("Times-Roman", "normal");
+      doc.setFontSize(12);
 
       lines.forEach((line: string) => {
           const isHeading = line.length < 100 && !line.endsWith('.') && line.trim().length > 0;
           
           if (y + 10 > pageHeight - margin) {
               doc.addPage();
-              addHeaderAndFooter(doc.internal.pages.length);
               y = margin + 10; // Reset y for new page
           }
           if(isHeading) {
@@ -202,6 +191,14 @@ export function DocumentPreview({ result, isLoading, onCancel, prompt }: Documen
           doc.setFont("Times-Roman", "normal");
           y += 7; 
       });
+
+      // Add footer to the last page
+      const totalPages = doc.internal.pages.length;
+      doc.setPage(totalPages);
+      doc.setFontSize(10);
+      doc.setTextColor(128, 0, 128); // Purple color
+      doc.setFont("Times-Roman", "normal");
+      doc.text("Researched with Scientisto AI", pageWidth / 2, pageHeight - margin + 10, { align: "center" });
 
       doc.save(`${fileName}.pdf`);
     }

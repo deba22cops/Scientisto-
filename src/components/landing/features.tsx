@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Zap, FileDown, LayoutDashboard, Feather, Palette, Clapperboard } from "lucide-react";
+import { Zap, FileDown, LayoutDashboard, Feather, Palette } from "lucide-react";
 
 const features = [
   {
@@ -24,14 +24,9 @@ const features = [
   },
   {
     icon: <Palette className="h-8 w-8 text-primary" />,
-    title: "Comic Generator (Coming Soon)",
-    description: "Bring your stories to life by generating comic panels and characters directly from your text prompts.",
+    title: "Comic & Manga Generator (Coming Soon)",
+    description: "Bring your stories to life by generating comic panels, manga art, and animated scenes from your text prompts.",
   },
-  {
-    icon: <Clapperboard className="h-8 w-8 text-primary" />,
-    title: "Manga & Anime Generator (Coming Soon)",
-    description: "Create high-class manga and animated scenes. Turn your scripts into visually stunning animated stories.",
-  }
 ];
 
 export function Features() {

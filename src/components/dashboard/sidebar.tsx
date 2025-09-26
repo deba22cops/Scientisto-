@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/tooltip";
 import {
   Home,
-  History,
   Settings,
   Bot,
 } from "lucide-react";
@@ -19,7 +18,6 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "New Research" },
-  { href: "/dashboard/history", icon: History, label: "History" },
 ];
 
 const bottomNavItems = [

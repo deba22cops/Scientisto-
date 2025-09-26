@@ -60,23 +60,3 @@ export async function handleGeneration(
     return { success: false, error: `Failed to generate document: ${errorMessage}` };
   }
 }
-
-export async function deleteDocument(userId: string, documentId: string): Promise<{success: boolean, error?: string}> {
-    if (!userId) {
-        return { success: false, error: 'User is not authenticated.' };
-    }
-    if (!documentId) {
-        return { success: false, error: 'Document ID is missing.' };
-    }
-
-    try {
-        const adminApp = getAdminApp();
-        const firestore = getFirestore(adminApp);
-        await firestore.collection('users').doc(userId).collection('generatedDocuments').doc(documentId).delete();
-        return { success: true };
-    } catch (error) {
-        console.error('Failed to delete document:', error);
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
-        return { success: false, error: `Failed to delete document: ${errorMessage}` };
-    }
-}

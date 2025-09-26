@@ -4,9 +4,8 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export function HeroAnimation() {
   return (
-    <div className="absolute inset-0 z-10 flex items-center justify-center">
-      <div className="w-full h-full max-w-3xl max-h-full relative -mt-16">
-        <div className="absolute inset-0">
+    <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 opacity-50">
           <DotLottieReact
             src="https://lottie.host/6b961c26-7004-4d33-8514-f27a6cb3bbc9/NutzC0pZjD.lottie"
             loop
@@ -26,7 +25,6 @@ export function HeroAnimation() {
             <div className="absolute left-1/2 top-full -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-background/80"></div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

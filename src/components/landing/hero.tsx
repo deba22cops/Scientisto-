@@ -1,17 +1,12 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { SampleOutputsModal } from "@/components/landing/sample-outputs-modal";
 import { ParticleBackground } from "@/components/landing/particle-background";
+import { HeroAnimation } from "@/components/landing/hero-animation";
 
 export function Hero() {
-  const dashboardImage = PlaceHolderImages.find(
-    (img) => img.id === "dashboard-mockup"
-  );
-
   return (
-    <section className="relative container mx-auto text-center py-16 sm:py-24">
+    <section className="relative container mx-auto text-center py-16 sm:py-24 overflow-hidden">
       <ParticleBackground />
       <div className="relative z-10 animate-fade-in-up">
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-headline tracking-tighter">
@@ -28,18 +23,8 @@ export function Hero() {
           <SampleOutputsModal />
         </div>
         <div className="mt-16 px-4">
-          <div className="relative mx-auto max-w-5xl rounded-xl shadow-2xl shadow-primary/20">
-            {dashboardImage && (
-              <Image
-                src={dashboardImage.imageUrl}
-                alt={dashboardImage.description}
-                width={1200}
-                height={800}
-                className="rounded-xl border-2 border-primary/20"
-                data-ai-hint={dashboardImage.imageHint}
-                priority
-              />
-            )}
+          <div className="relative mx-auto max-w-5xl h-[400px] sm:h-[500px] lg:h-[600px]">
+            <HeroAnimation />
           </div>
         </div>
       </div>

@@ -12,18 +12,18 @@ export function ScientoLogo(props: SVGProps<SVGSVGElement>) {
       <text
         x="0"
         y="28"
-        fontFamily="var(--font-space-grotesk), sans-serif"
+        fontFamily="var(--font-headline, sans-serif)"
         fontSize="30"
         fontWeight="bold"
         fill="hsl(var(--primary))"
         className="font-headline"
       >
-        Scientisto
+        Genexto
       </text>
       <text
         x="155"
         y="20"
-        fontFamily="var(--font-space-grotesk), sans-serif"
+        fontFamily="var(--font-headline, sans-serif)"
         fontSize="14"
         fontWeight="bold"
         fill="hsl(var(--muted-foreground))"

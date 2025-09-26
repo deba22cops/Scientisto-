@@ -2,44 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
-    --background: 220 17% 10%;
+    --background: 262 83% 5%;
     --foreground: 210 40% 98%;
-    --card: 220 17% 15%;
+    --card: 262 83% 10%;
     --card-foreground: 210 40% 98%;
-    --popover: 220 17% 10%;
+    --popover: 262 83% 5%;
     --popover-foreground: 210 40% 98%;
-    --primary: 257 80% 70%;
+    --primary: 257 80% 60%;
     --primary-foreground: 210 40% 98%;
     --secondary: 217 33% 25%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217 33% 25%;
     --muted-foreground: 215 20% 65%;
-    --accent: 257 80% 70%;
+    --accent: 161 94% 21%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --border: 217 33% 25%;
     --input: 217 33% 25%;
     --ring: 217 91% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
     --radius: 0.5rem;
   }
+ 
   .dark {
-    --background: 220 17% 10%;
+    --background: 262 83% 5%;
     --foreground: 210 40% 98%;
-    --card: 220 17% 15%;
+    --card: 262 83% 10%;
     --card-foreground: 210 40% 98%;
-    --popover: 220 17% 10%;
+    --popover: 262 83% 5%;
     --popover-foreground: 210 40% 98%;
     --primary: 257 80% 70%;
     --primary-foreground: 210 40% 98%;
@@ -47,18 +39,13 @@ body {
     --secondary-foreground: 210 40% 98%;
     --muted: 217 33% 25%;
     --muted-foreground: 215 20% 65%;
-    --accent: 257 80% 70%;
+    --accent: 161 94% 31%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --border: 217 33% 25%;
     --input: 217 33% 25%;
     --ring: 217 91% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
   }
 }
 
@@ -68,5 +55,20 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  h1 {
+    @apply text-4xl font-bold tracking-tighter sm:text-5xl lg:text-6xl;
+  }
+  h2 {
+    @apply text-3xl font-bold tracking-tight;
+  }
+  h3 {
+    @apply text-2xl font-bold tracking-tight;
+  }
+  p {
+    @apply text-base text-muted-foreground;
   }
 }

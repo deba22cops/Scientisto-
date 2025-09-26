@@ -12,9 +12,9 @@ import {
 import {
   Home,
   Settings,
-  Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ScientoLogo } from "../icons";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "New Research" },
@@ -35,8 +35,8 @@ export function DashboardSidebar() {
             href="/dashboard"
             className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
           >
-            <Bot className="h-4 w-4 transition-all group-hover:scale-110" />
-            <span className="sr-only">Scientisto</span>
+            <ScientoLogo className="h-4 w-4 transition-all group-hover:scale-110" />
+            <span className="sr-only">Genexto</span>
           </Link>
           {navItems.map((item) => (
             <Tooltip key={item.label}>

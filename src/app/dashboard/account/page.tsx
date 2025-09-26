@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -39,12 +39,19 @@ export default function AccountPage() {
   const auth = useAuth();
   const { toast } = useToast();
 
-  const [displayName, setDisplayName] = useState(user?.displayName || '');
-  const [email, setEmail] = useState(user?.email || '');
+  const [displayName, setDisplayName] = useState('');
+  const [email, setEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  
+  useEffect(() => {
+    if(user) {
+      setDisplayName(user.displayName || '');
+      setEmail(user.email || '');
+    }
+  }, [user]);
 
   const getInitials = (name?: string | null) => {
     if (!name) return 'U';
@@ -154,7 +161,7 @@ export default function AccountPage() {
             {isUserLoading ? (
               <Skeleton className="h-10 w-full" />
             ) : (
-              <Input id="name" defaultValue={user?.displayName || ''} onChange={(e) => setDisplayName(e.target.value)} disabled={isUpdating} />
+              <Input id="name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} disabled={isUpdating} />
             )}
           </div>
           <Button onClick={handleProfileUpdate} disabled={isUpdating}>
@@ -171,7 +178,7 @@ export default function AccountPage() {
         <CardContent className="space-y-4">
             <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                {isUserLoading ? <Skeleton className="h-10 w-full" /> : <Input id="email" type="email" defaultValue={user?.email || ''} onChange={(e) => setEmail(e.target.value)} disabled={isUpdating} />}
+                {isUserLoading ? <Skeleton className="h-10 w-full" /> : <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isUpdating} />}
             </div>
             <div className="space-y-2">
                 <Label htmlFor="currentPasswordEmail">Current Password</Label>
